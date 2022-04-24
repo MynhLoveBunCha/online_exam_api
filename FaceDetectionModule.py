@@ -20,21 +20,22 @@ class FaceDetector:
                 frame_h, frame_w, color_channel = img.shape
                 bbox = int(bbox_class.xmin * frame_w), int(bbox_class.ymin * frame_h), \
                         int(bbox_class.width * frame_w), int(bbox_class.height * frame_h)
-                faces.append([id, bbox, detection.score])
+                faces.append([id, bbox, detection.score[0]])
         return faces
 
-    def drawBoundingBox(self, img, faces, color=(0, 255, 0), line_thickness=7, text_thickness=2):
+    def drawBoundingBox(self, img, faces, color=(0, 255, 0), line_thickness=5, text_thickness=2):
+        ret_img = img.copy()
         for face in faces:
             x, y, w, h = face[1]
             linelen = w // 6
-            confidence = face[2][0]
-            cv2.line(img, (x, y), (x + linelen, y), color, thickness=line_thickness)
-            cv2.line(img, (x, y), (x, y + linelen), color, thickness=line_thickness)
-            cv2.line(img, (x, y + h), (x + linelen, y + h), color, thickness=line_thickness)
-            cv2.line(img, (x, y + h), (x, y + h - linelen), color, thickness=line_thickness)
-            cv2.line(img, (x + w, y), (x + w - linelen, y), color, thickness=line_thickness)
-            cv2.line(img, (x + w, y), (x + w, y + linelen), color, thickness=line_thickness)
-            cv2.line(img, (x + w, y + h), (x + w - linelen, y + h), color, thickness=line_thickness)
-            cv2.line(img, (x + w, y + h), (x + w, y + h - linelen), color, thickness=line_thickness)
-            cv2.putText(img, f'{int(confidence * 100)}%', (x, y - 20), cv2.FONT_HERSHEY_PLAIN, 1.5, color, thickness=text_thickness)
-        return img
+            confidence = face[2]
+            cv2.line(ret_img, (x, y), (x + linelen, y), color, thickness=line_thickness)
+            cv2.line(ret_img, (x, y), (x, y + linelen), color, thickness=line_thickness)
+            cv2.line(ret_img, (x, y + h), (x + linelen, y + h), color, thickness=line_thickness)
+            cv2.line(ret_img, (x, y + h), (x, y + h - linelen), color, thickness=line_thickness)
+            cv2.line(ret_img, (x + w, y), (x + w - linelen, y), color, thickness=line_thickness)
+            cv2.line(ret_img, (x + w, y), (x + w, y + linelen), color, thickness=line_thickness)
+            cv2.line(ret_img, (x + w, y + h), (x + w - linelen, y + h), color, thickness=line_thickness)
+            cv2.line(ret_img, (x + w, y + h), (x + w, y + h - linelen), color, thickness=line_thickness)
+            cv2.putText(ret_img, f'{int(confidence * 100)}%', (x, y - 20), cv2.FONT_HERSHEY_PLAIN, 1.5, color, thickness=text_thickness)
+        return ret_img
